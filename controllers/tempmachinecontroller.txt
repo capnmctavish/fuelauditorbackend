@@ -1,0 +1,54 @@
+exports.addMachine = (req, res, next) => {
+    const machine = req.body.machine;
+    const nozzles = req.body.nozzles;
+    const nozzle = req.body.nozzle;
+    const reading = req.body.reading;
+    const mfgyear = req.body.mfgyear;
+    const modelno = req.body.modelno;
+    const serialno = req.body.serialno;
+    const start = req.body.start;
+    const end = req.body.end;
+    const test = req.body.test;
+    const tenantId = req.body.tenantId;
+    const pumpId = req.body.pumpId;
+
+   
+
+    // const fuel = new Machine(req.body);
+//Steve suggsted and was working
+    // console.log('fuel', fuel);
+
+    const fuel = new Machine({
+      tenantId : tenantId,
+      pumpId : pumpId,
+      // machineId : req.machineId,
+      machine : machine,
+      modelno : modelno,
+      mfgyear : mfgyear,
+      serialno : serialno,
+      nozzles: [
+        {
+          nozzle: nozzle,
+          reading: [
+            {
+              start : start,
+              end : end,
+              test : test
+            }
+          ] 
+      }
+      ]
+    });
+    // fuel.markModified('nozzles');
+     fuel.save()
+    .then(result => {
+      console.log(result);
+      res.status(201).json({ message: 'New machine has been added!', MachineID: result._id});
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
